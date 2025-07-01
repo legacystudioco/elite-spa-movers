@@ -1,78 +1,36 @@
 {
-  "firebase.json": {
-    "functions": [
-      {
-        "source": "functions",
-        "codebase": "default",
-        "ignore": [
-          "node_modules",
-          ".git",
-          "firebase-debug.log",
-          "firebase-debug.*.log"
-        ]
-      }
-    ],
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    }
+  ],
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
     "firestore": {
-      "rules": "firestore.rules",
-      "indexes": "firestore.indexes.json"
+      "port": 8080
     },
     "storage": {
-      "rules": "storage.rules"
+      "port": 9199
     },
-    "emulators": {
-      "functions": {
-        "port": 5001
-      },
-      "firestore": {
-        "port": 8080
-      },
-      "storage": {
-        "port": 9199
-      },
-      "ui": {
-        "enabled": true
-      },
-      "singleProjectMode": true
-    }
-  },
-
-  "firestore.indexes.json": {
-    "indexes": [
-      {
-        "collectionGroup": "appointments",
-        "queryScope": "COLLECTION",
-        "fields": [
-          {
-            "fieldPath": "status",
-            "order": "ASCENDING"
-          },
-          {
-            "fieldPath": "requestedDate",
-            "order": "ASCENDING"
-          }
-        ]
-      },
-      {
-        "collectionGroup": "appointments",
-        "queryScope": "COLLECTION",
-        "fields": [
-          {
-            "fieldPath": "status",
-            "order": "ASCENDING"
-          },
-          {
-            "fieldPath": "createdAt",
-            "order": "DESCENDING"
-          }
-        ]
-      }
-    ],
-    "fieldOverrides": []
-  },
-
-  "firestore.rules": "rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    // Appointments collection - only admin can read/write\n    match /appointments/{appointmentId} {\n      allow read, write: if request.auth != null && \n        (request.auth.token.admin == true || request.auth.token.email == 'tylersbangerang@gmail.com');\n    }\n    \n    // Admin FCM tokens - only authenticated admins can manage\n    match /adminTokens/{tokenId} {\n      allow read, write: if request.auth != null && \n        (request.auth.token.admin == true || request.auth.token.email == 'tylersbangerang@gmail.com');\n    }\n    \n    // Blocked time slots - admin only\n    match /blockedSlots/{slotId} {\n      allow read, write: if request.auth != null && \n        (request.auth.token.admin == true || request.auth.token.email == 'tylersbangerang@gmail.com');\n    }\n    \n    // Admin users collection - admin only\n    match /adminUsers/{userId} {\n      allow read, write: if request.auth != null && \n        (request.auth.token.admin == true || request.auth.token.email == 'tylersbangerang@gmail.com');\n    }\n  }\n}",
-
-  "storage.rules": "rules_version = '2';\nservice firebase.storage {\n  match /b/{bucket}/o {\n    // Allow public read access to appointment photos\n    match /appointment-photos/{allPaths=**} {\n      allow read: if true;\n      allow write: if false; // Only functions can write\n    }\n    \n    // Admin only access to other files\n    match /{allPaths=**} {\n      allow read, write: if request.auth != null && \n        (request.auth.token.admin == true || request.auth.token.email == 'tylersbangerang@gmail.com');\n    }\n  }\n}",
-
-  ".eslintrc.js": "module.exports = {\n  env: {\n    browser: true,\n    es6: true,\n    node: true,\n  },\n  extends: [\n    \"eslint:recommended\",\n    \"google\",\n  ],\n  rules: {\n    \"no-restricted-globals\": [\"error\", \"name\", \"length\"],\n    \"prefer-arrow-callback\": \"error\",\n    \"quotes\": [\"error\", \"double\", {\"allowTemplateLiterals\": true}],\n  },\n  overrides: [\n    {\n      files: [\"**/*.spec.*\"],\n      env: {\n        mocha: true,\n      },\n      rules: {},\n    },\n  ],\n  globals: {},\n};"
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
+  }
 }
