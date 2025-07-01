@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Spa Movers - Book Appointment</title>
+    <style>
+        /* wix-integration/booking-form.css */
+
+        .booking-form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f9f9f9;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .form-header p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-upload-label {
+            display: block;
+            padding: 12px 16px;
+            background: #ecf0f1;
+            border: 2px dashed #bdc3c7;
+            border-radius: 8px;
+            text-align: center;
+            color: #7f8c8d;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover .file-upload-label {
+            background: #d5dbdb;
+            border-color: #95a5a6;
+        }
+
+        .file-preview {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f5e8;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #27ae60;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #21618c);
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .booking-form {
+                margin: 10px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="booking-form">
+        <div class="form-header">
+            <h2>📞 Request an Appointment</h2>
+            <p>Fill out the form below and we'll get back to you within 24 hours</p>
+        </div>
+
+        <form id="bookingForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fullName">Full Name <span class="required">*</span></label>
+                    <input type="text" id="fullName" name="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number <span class="required">*</span></label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" required>
+                </div>
+                <div class="form-group">
+                    <label for="serviceType">Service Type <span class="required">*</span></label>
+                    <select id="serviceType" name="serviceType" required>
+                        <option value="">Select a service...</option>
+                        <option value="Hot Tub Moving & Delivery">🛁 Hot Tub Moving & Delivery</option>
+                        <option value="Basketball System Install/Removal">🏀 Basketball System Install/Removal</option>
+                        <option value="Furniture & Equipment Assembly">🔨 Furniture & Equipment Assembly</option>
+                        <option value="Pool & Game Table Setup">🎱 Pool & Game Table Setup</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Service Address <span class="required">*</span></label>
+                <input type="text" id="address" name="address" required placeholder="Enter full address where service is needed">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="requestedDate">Preferred Date <span class="required">*</span></label>
+                    <input type="date" id="requestedDate" name="requestedDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="requestedTime">Preferred Time <span class="required">*</span></label>
+                    <input type="time" id="requestedTime" name="requestedTime" required min="09:00" max="17:00">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Additional Notes (Optional)</label>
+                <textarea id="notes" name="notes" rows="4" placeholder="Any special instructions, access information, or additional details..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Upload Photo (Optional)</label>
+                <div class="file-upload">
+                    <input type="file" id="photoUpload" accept="image/jpeg,image/jpg,image/png" />
+                    <label for="photoUpload" class="file-upload-label">
+                        📷 Click to upload a photo (JPG, PNG - Max 10MB)
+                    </label>
+                </div>
+                <div id="filePreview" class="file-preview" style="display: none;"></div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                📅 Request Appointment
+            </button>
+
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
+                <p>Submitting your request...</p>
+            </div>
+
+            <div id="alertContainer"></div>
+        </form>
+    </div>
+
+    <script>
+        // wix-integration/booking-form.js
+
+        // Configuration - REPLACE WITH YOUR ACTUAL FIREBASE PROJECT URL
+        const API_BASE_URL = 'https://us-central1-YOUR-PROJECT-ID.cloudfunctions.net';
+
+        // Form elements
+        const form = document.getElementById('bookingForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const alertContainer = document.getElementById('alertContainer');
+        const photoUpload = document.getElementById('photoUpload');
+        const filePreview = document.getElementById('filePreview');
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('requestedDate').min = today;
+
+        // File upload preview
+        photoUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Validate file type
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                if (!allowedTypes.includes(file.type)) {
+                    showAlert('Please select a JPG or PNG image file.', 'error');
+                    this.value = '';
+                    return;
+                }
+
+                // Validate file size (10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    showAlert('File size must be less than 10MB.', 'error');
+                    this.value = '';
+                    return;
+                }
+
+                filePreview.style.display = 'block';
+                filePreview.innerHTML = `✅ Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+            } else {
+                filePreview.style.display = 'none';
+            }
+        });
+
+        // Form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Validate business hours
+            const requestedDate = document.getElementById('requestedDate').value;
+            const requestedTime = document.getElementById('requestedTime').value;
+            
+            if (!isValidBusinessTime(requestedDate, requestedTime)) {
+                showAlert('Please select a time during business hours (Monday-Friday, 9:00 AM - 5:00 PM).', 'error');
+                return;
+            }
+
+            // Show loading state
+            setLoadingState(true);
+
+            try {
+                // Check availability first
+                const availability = await checkAvailability(requestedDate, requestedTime, document.getElementById('serviceType').value);
+                
+                if (!availability.available) {
+                    throw new Error(availability.reason || 'Time slot not available');
+                }
+
+                // Upload photo if present
+                let photoUrl = null;
+                const photoFile = photoUpload.files[0];
+                if (photoFile) {
+                    photoUrl = await uploadPhoto(photoFile);
+                }
+
+                // Prepare form data
+                const formData = {
+                    fullName: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    phoneNumber: document.getElementById('phoneNumber').value,
+                    address: document.getElementById('address').value,
+                    serviceType: document.getElementById('serviceType').value,
+                    requestedDate: requestedDate,
+                    requestedTime: requestedTime,
+                    notes: document.getElementById('notes').value,
+                    photoUrl: photoUrl
+                };
+
+                // Submit appointment
+                const response = await fetch(`${API_BASE_URL}/createAppointment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('🎉 Appointment request submitted successfully! We\'ll contact you within 24 hours to confirm.', 'success');
+                    form.reset();
+                    filePreview.style.display = 'none';
+                } else {
+                    throw new Error(result.error || 'Failed to submit appointment');
+                }
+
+            } catch (error) {
+                console.error('Error submitting appointment:', error);
+                showAlert('❌ ' + error.message, 'error');
+            } finally {
+                setLoadingState(false);
+            }
+        });
+
+        // Helper functions
+        function isValidBusinessTime(date, time) {
+            const requestedDate = new Date(date);
+            const dayOfWeek = requestedDate.getDay(); // 0 = Sunday, 6 = Saturday
+            
+            // Check if it's a weekday (Monday = 1, Friday = 5)
+            if (dayOfWeek < 1 || dayOfWeek > 5) {
+                return false;
+            }
+
+            // Check if time is within business hours (9:00 - 17:00)
+            const timeHour = parseInt(time.split(':')[0]);
+            return timeHour >= 9 && timeHour < 17;
+        }
+
+        async function checkAvailability(date, time, serviceType) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/checkAvailability?date=${date}&time=${time}&serviceType=${encodeURIComponent(serviceType)}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Error checking availability:', error);
+                return { available: true }; // Assume available if check fails
+            }
+        }
+
+        async function uploadPhoto(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    try {
+                        const response = await fetch(`${API_BASE_URL}/uploadPhoto`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                imageData: e.target.result,
+                                fileName: file.name
+                            })
+                        });
+
+                        const result = await response.json();
+                        
+                        if (response.ok) {
+                            resolve(result.photoUrl);
+                        } else {
+                            throw new Error(result.error || 'Failed to upload photo');
+                        }
+                    } catch (error) {
+                        reject(error);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function setLoadingState(loading) {
+            if (loading) {
+                submitBtn.style.display = 'none';
+                loadingSpinner.style.display = 'block';
+                // Disable form inputs
+                const inputs = form.querySelectorAll('input, select, textarea, button');
+                inputs.forEach(input => input.disabled = true);
+            } else {
+                submitBtn.style.display = 'block';
+                loadingSpinner.style.display = 'none';
+                // Re-enable form inputs
+                const inputs = form.querySelectorAll('input, select, textarea, button');
+                inputs.forEach(input => input.disabled = false);
+            }
+        }
+
+        function showAlert(message, type) {
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type}">
+                    ${message}
+                </div>
+            `;
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    alertContainer.innerHTML = '';
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>
