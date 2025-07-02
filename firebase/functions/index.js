@@ -33,7 +33,14 @@ exports.checkAvailability = functions.https.onRequest(async (req, res) => {
 exports.createAppointment = functions.https.onRequest(async (req, res) => {
   const data = req.body;
 
-  if (!data.fullName || !data.email || !data.phoneNumber || !data.requestedDate || !data.requestedTime || !data.serviceType) {
+  if (
+    !data.fullName ||
+    !data.email ||
+    !data.phoneNumber ||
+    !data.requestedDate ||
+    !data.requestedTime ||
+    !data.serviceType
+  ) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
