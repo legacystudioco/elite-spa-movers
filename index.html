@@ -13,7 +13,7 @@
         }
 
         .booking-form {
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
             padding: 20px;
             background: #f9f9f9;
@@ -75,6 +75,169 @@
 
         .form-row .form-group {
             flex: 1;
+        }
+
+        /* Calendar Styles */
+        .calendar-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-nav-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .calendar-nav-btn:hover {
+            background: #2980b9;
+        }
+
+        .calendar-nav-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .month-year {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .calendar-day-header {
+            background: #34495e;
+            color: white;
+            padding: 12px 4px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .calendar-day {
+            background: white;
+            padding: 12px 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 14px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calendar-day:hover {
+            background: #ecf0f1;
+        }
+
+        .calendar-day.other-month {
+            background: #f8f9fa;
+            color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .calendar-day.weekend {
+            background: #ffe6e6;
+            color: #e74c3c;
+            cursor: not-allowed;
+        }
+
+        .calendar-day.selected {
+            background: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+
+        .calendar-day.past {
+            background: #f8f9fa;
+            color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        /* Time Slots */
+        .time-slots-section {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .time-slots-header {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .time-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .time-slot {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            font-weight: 500;
+        }
+
+        .time-slot:hover {
+            border-color: #3498db;
+            background: #f8f9ff;
+        }
+
+        .time-slot.selected {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .time-slot.unavailable {
+            background: #ffebee;
+            color: #e74c3c;
+            border-color: #ffcdd2;
+            cursor: not-allowed;
+        }
+
+        .time-slot.unavailable:hover {
+            background: #ffebee;
+            border-color: #ffcdd2;
+        }
+
+        .loading-time-slots {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
         }
 
         .submit-btn {
@@ -146,6 +309,24 @@
             color: #e74c3c;
         }
 
+        .selected-datetime {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #27ae60;
+        }
+
+        .selected-datetime h4 {
+            margin: 0 0 5px 0;
+            color: #27ae60;
+        }
+
+        .selected-datetime p {
+            margin: 0;
+            color: #2c3e50;
+        }
+
         @media (max-width: 768px) {
             .form-row {
                 flex-direction: column;
@@ -155,6 +336,15 @@
             .booking-form {
                 margin: 10px;
                 padding: 15px;
+            }
+
+            .calendar-grid {
+                font-size: 12px;
+            }
+
+            .time-slots-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 8px;
             }
         }
     </style>
@@ -200,15 +390,28 @@
                 <input type="text" id="address" name="address" required placeholder="Enter full address where service is needed">
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="requestedDate">Preferred Date <span class="required">*</span></label>
-                    <input type="date" id="requestedDate" name="requestedDate" required>
+            <!-- Calendar Section -->
+            <div class="calendar-section">
+                <h3>Select Date & Time <span class="required">*</span></h3>
+                <div class="calendar-header">
+                    <button type="button" class="calendar-nav-btn" id="prevMonth">← Previous</button>
+                    <div class="month-year" id="monthYear"></div>
+                    <button type="button" class="calendar-nav-btn" id="nextMonth">Next →</button>
                 </div>
-                <div class="form-group">
-                    <label for="requestedTime">Preferred Time <span class="required">*</span></label>
-                    <input type="time" id="requestedTime" name="requestedTime" required min="09:00" max="17:00">
-                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
+
+            <!-- Time Slots Section -->
+            <div class="time-slots-section" id="timeSlotsSection">
+                <div class="time-slots-header">Available Times for <span id="selectedDateDisplay"></span>:</div>
+                <div class="loading-time-slots" id="loadingTimeSlots">Loading available times...</div>
+                <div class="time-slots-grid" id="timeSlotsGrid"></div>
+            </div>
+
+            <!-- Selected Date/Time Display -->
+            <div id="selectedDateTime" class="selected-datetime" style="display: none;">
+                <h4>📅 Selected Appointment:</h4>
+                <p id="selectedDateTimeText"></p>
             </div>
 
             <div class="form-group">
@@ -216,7 +419,7 @@
                 <textarea id="notes" name="notes" rows="4" placeholder="Any special instructions, access information, or additional details..."></textarea>
             </div>
 
-            <button type="submit" class="submit-btn" id="submitBtn">
+            <button type="submit" class="submit-btn" id="submitBtn" disabled>
                 📅 Request Appointment
             </button>
 
@@ -233,54 +436,291 @@
         // Configuration - REPLACE WITH YOUR ACTUAL FIREBASE PROJECT URL
         const API_BASE_URL = 'https://us-central1-YOUR-PROJECT-ID.cloudfunctions.net';
 
+        // Global variables
+        let currentDate = new Date();
+        let selectedDate = null;
+        let selectedTime = null;
+        let selectedServiceType = null;
+
+        // Business hours: 9 AM to 5 PM
+        const BUSINESS_HOURS = {
+            start: 9,
+            end: 17,
+            interval: 60 // 60 minute intervals
+        };
+
         // Form elements
         const form = document.getElementById('bookingForm');
         const submitBtn = document.getElementById('submitBtn');
         const loadingSpinner = document.getElementById('loadingSpinner');
         const alertContainer = document.getElementById('alertContainer');
+        const serviceTypeSelect = document.getElementById('serviceType');
 
-        // Set minimum date to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('requestedDate').min = today;
+        // Calendar elements
+        const monthYearElement = document.getElementById('monthYear');
+        const calendarGrid = document.getElementById('calendarGrid');
+        const prevMonthBtn = document.getElementById('prevMonth');
+        const nextMonthBtn = document.getElementById('nextMonth');
+        const timeSlotsSection = document.getElementById('timeSlotsSection');
+        const timeSlotsGrid = document.getElementById('timeSlotsGrid');
+        const loadingTimeSlots = document.getElementById('loadingTimeSlots');
+        const selectedDateDisplay = document.getElementById('selectedDateDisplay');
+        const selectedDateTime = document.getElementById('selectedDateTime');
+        const selectedDateTimeText = document.getElementById('selectedDateTimeText');
 
-        // Form submission
-        form.addEventListener('submit', async function(e) {
+        // Initialize calendar
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCalendar();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            prevMonthBtn.addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                renderCalendar();
+            });
+
+            nextMonthBtn.addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                renderCalendar();
+            });
+
+            serviceTypeSelect.addEventListener('change', () => {
+                selectedServiceType = serviceTypeSelect.value;
+                if (selectedDate && selectedServiceType) {
+                    loadTimeSlots(selectedDate);
+                }
+            });
+
+            form.addEventListener('submit', submitForm);
+        }
+
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            // Update month/year display
+            monthYearElement.textContent = new Date(year, month).toLocaleDateString('en-US', { 
+                month: 'long', 
+                year: 'numeric' 
+            });
+
+            // Clear calendar
+            calendarGrid.innerHTML = '';
+
+            // Add day headers
+            const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            dayHeaders.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-day-header';
+                dayHeader.textContent = day;
+                calendarGrid.appendChild(dayHeader);
+            });
+
+            // Get first day of month and number of days
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+
+            // Add empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day other-month';
+                calendarGrid.appendChild(emptyDay);
+            }
+
+            // Add days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+
+                const currentDateObj = new Date(year, month, day);
+                const dayOfWeek = currentDateObj.getDay();
+
+                // Check if it's a weekend (Sunday = 0, Saturday = 6)
+                if (dayOfWeek === 0 || dayOfWeek === 6) {
+                    dayElement.classList.add('weekend');
+                }
+                // Check if it's in the past
+                else if (currentDateObj < today.setHours(0, 0, 0, 0)) {
+                    dayElement.classList.add('past');
+                }
+                // Weekday and not in the past
+                else {
+                    dayElement.addEventListener('click', () => selectDate(currentDateObj, dayElement));
+                }
+
+                calendarGrid.appendChild(dayElement);
+            }
+
+            // Update navigation buttons
+            const today2 = new Date();
+            prevMonthBtn.disabled = (year === today2.getFullYear() && month <= today2.getMonth());
+        }
+
+        function selectDate(date, dayElement) {
+            // Remove previous selection
+            document.querySelectorAll('.calendar-day.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+
+            // Add selection to clicked day
+            dayElement.classList.add('selected');
+            selectedDate = date;
+
+            // Update selected date display
+            selectedDateDisplay.textContent = date.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+
+            // Show time slots section
+            timeSlotsSection.style.display = 'block';
+
+            // Load time slots if service type is selected
+            if (selectedServiceType) {
+                loadTimeSlots(date);
+            } else {
+                timeSlotsGrid.innerHTML = '<p style="text-align: center; color: #7f8c8d;">Please select a service type first</p>';
+                loadingTimeSlots.style.display = 'none';
+            }
+        }
+
+        async function loadTimeSlots(date) {
+            if (!selectedServiceType) return;
+
+            loadingTimeSlots.style.display = 'block';
+            timeSlotsGrid.innerHTML = '';
+
+            try {
+                const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+                const timeSlots = generateTimeSlots();
+
+                // Check availability for each time slot
+                const availabilityPromises = timeSlots.map(async (time) => {
+                    try {
+                        const response = await fetch(
+                            `${API_BASE_URL}/checkAvailability?date=${dateStr}&time=${time}&serviceType=${encodeURIComponent(selectedServiceType)}`
+                        );
+                        const result = await response.json();
+                        return { time, available: result.available };
+                    } catch (error) {
+                        console.error('Error checking availability for', time, error);
+                        return { time, available: true }; // Assume available if check fails
+                    }
+                });
+
+                const availabilities = await Promise.all(availabilityPromises);
+
+                // Create time slot elements
+                timeSlotsGrid.innerHTML = '';
+                availabilities.forEach(({ time, available }) => {
+                    const timeSlot = document.createElement('div');
+                    timeSlot.className = 'time-slot';
+                    timeSlot.textContent = formatTime(time);
+
+                    if (available) {
+                        timeSlot.addEventListener('click', () => selectTime(time, timeSlot));
+                    } else {
+                        timeSlot.classList.add('unavailable');
+                        timeSlot.title = 'This time slot is not available';
+                    }
+
+                    timeSlotsGrid.appendChild(timeSlot);
+                });
+
+            } catch (error) {
+                console.error('Error loading time slots:', error);
+                timeSlotsGrid.innerHTML = '<p style="text-align: center; color: #e74c3c;">Error loading time slots</p>';
+            } finally {
+                loadingTimeSlots.style.display = 'none';
+            }
+        }
+
+        function generateTimeSlots() {
+            const slots = [];
+            for (let hour = BUSINESS_HOURS.start; hour < BUSINESS_HOURS.end; hour++) {
+                slots.push(`${hour.toString().padStart(2, '0')}:00`);
+            }
+            return slots;
+        }
+
+        function formatTime(time) {
+            const [hour, minute] = time.split(':');
+            const hour12 = parseInt(hour) > 12 ? parseInt(hour) - 12 : parseInt(hour);
+            const ampm = parseInt(hour) >= 12 ? 'PM' : 'AM';
+            const displayHour = hour12 === 0 ? 12 : hour12;
+            return `${displayHour}:${minute} ${ampm}`;
+        }
+
+        function selectTime(time, timeSlotElement) {
+            // Remove previous selection
+            document.querySelectorAll('.time-slot.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+
+            // Add selection to clicked time slot
+            timeSlotElement.classList.add('selected');
+            selectedTime = time;
+
+            // Update selected date/time display
+            const dateStr = selectedDate.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            const timeStr = formatTime(time);
+            
+            selectedDateTimeText.textContent = `${dateStr} at ${timeStr}`;
+            selectedDateTime.style.display = 'block';
+
+            // Enable submit button
+            updateSubmitButton();
+        }
+
+        function updateSubmitButton() {
+            const isFormValid = selectedDate && selectedTime && 
+                document.getElementById('fullName').value &&
+                document.getElementById('email').value &&
+                document.getElementById('phoneNumber').value &&
+                document.getElementById('address').value &&
+                selectedServiceType;
+
+            submitBtn.disabled = !isFormValid;
+        }
+
+        // Add input listeners to update submit button
+        ['fullName', 'email', 'phoneNumber', 'address'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateSubmitButton);
+        });
+
+        async function submitForm(e) {
             e.preventDefault();
-            
-            // Validate business hours
-            const requestedDate = document.getElementById('requestedDate').value;
-            const requestedTime = document.getElementById('requestedTime').value;
-            
-            if (!isValidBusinessTime(requestedDate, requestedTime)) {
-                showAlert('Please select a time during business hours (Monday-Friday, 9:00 AM - 5:00 PM).', 'error');
+
+            if (!selectedDate || !selectedTime) {
+                showAlert('Please select a date and time for your appointment.', 'error');
                 return;
             }
 
-            // Show loading state
             setLoadingState(true);
 
             try {
-                // Check availability first
-                const availability = await checkAvailability(requestedDate, requestedTime, document.getElementById('serviceType').value);
-                
-                if (!availability.available) {
-                    throw new Error(availability.reason || 'Time slot not available');
-                }
-
-                // Prepare form data
                 const formData = {
                     fullName: document.getElementById('fullName').value,
                     email: document.getElementById('email').value,
                     phoneNumber: document.getElementById('phoneNumber').value,
                     address: document.getElementById('address').value,
-                    serviceType: document.getElementById('serviceType').value,
-                    requestedDate: requestedDate,
-                    requestedTime: requestedTime,
+                    serviceType: selectedServiceType,
+                    requestedDate: selectedDate.toISOString().split('T')[0],
+                    requestedTime: selectedTime,
                     notes: document.getElementById('notes').value,
                     photoUrl: null
                 };
 
-                // Submit appointment
                 const response = await fetch(`${API_BASE_URL}/createAppointment`, {
                     method: 'POST',
                     headers: {
@@ -294,6 +734,13 @@
                 if (response.ok) {
                     showAlert('🎉 Appointment request submitted successfully! We\'ll contact you within 24 hours to confirm.', 'success');
                     form.reset();
+                    selectedDate = null;
+                    selectedTime = null;
+                    selectedServiceType = null;
+                    timeSlotsSection.style.display = 'none';
+                    selectedDateTime.style.display = 'none';
+                    renderCalendar();
+                    updateSubmitButton();
                 } else {
                     throw new Error(result.error || 'Failed to submit appointment');
                 }
@@ -304,46 +751,20 @@
             } finally {
                 setLoadingState(false);
             }
-        });
-
-        // Helper functions
-        function isValidBusinessTime(date, time) {
-            const requestedDate = new Date(date);
-            const dayOfWeek = requestedDate.getDay(); // 0 = Sunday, 6 = Saturday
-            
-            // Check if it's a weekday (Monday = 1, Friday = 5)
-            if (dayOfWeek < 1 || dayOfWeek > 5) {
-                return false;
-            }
-
-            // Check if time is within business hours (9:00 - 17:00)
-            const timeHour = parseInt(time.split(':')[0]);
-            return timeHour >= 9 && timeHour < 17;
-        }
-
-        async function checkAvailability(date, time, serviceType) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/checkAvailability?date=${date}&time=${time}&serviceType=${encodeURIComponent(serviceType)}`);
-                return await response.json();
-            } catch (error) {
-                console.error('Error checking availability:', error);
-                return { available: true }; // Assume available if check fails
-            }
         }
 
         function setLoadingState(loading) {
             if (loading) {
                 submitBtn.style.display = 'none';
                 loadingSpinner.style.display = 'block';
-                // Disable form inputs
                 const inputs = form.querySelectorAll('input, select, textarea, button');
                 inputs.forEach(input => input.disabled = true);
             } else {
                 submitBtn.style.display = 'block';
                 loadingSpinner.style.display = 'none';
-                // Re-enable form inputs
                 const inputs = form.querySelectorAll('input, select, textarea, button');
                 inputs.forEach(input => input.disabled = false);
+                updateSubmitButton();
             }
         }
 
@@ -354,7 +775,6 @@
                 </div>
             `;
             
-            // Auto-hide success messages after 5 seconds
             if (type === 'success') {
                 setTimeout(() => {
                     alertContainer.innerHTML = '';
