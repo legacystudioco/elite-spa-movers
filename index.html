@@ -196,7 +196,7 @@
 
         .time-slots-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 10px;
         }
 
@@ -327,6 +327,69 @@
             color: #2c3e50;
         }
 
+        /* Success Modal */
+        .success-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .success-modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s;
+        }
+
+        .success-modal h3 {
+            color: #27ae60;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .success-modal p {
+            color: #2c3e50;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .success-modal-close {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .success-modal-close:hover {
+            background: #219a52;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
         @media (max-width: 768px) {
             .form-row {
                 flex-direction: column;
@@ -343,7 +406,7 @@
             }
 
             .time-slots-grid {
-                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
                 gap: 8px;
             }
         }
@@ -377,17 +440,32 @@
                     <label for="serviceType">Service Type <span class="required">*</span></label>
                     <select id="serviceType" name="serviceType" required>
                         <option value="">Select a service...</option>
-                        <option value="Hot Tub Moving & Delivery">🛁 Hot Tub Moving & Delivery</option>
-                        <option value="Basketball System Install/Removal">🏀 Basketball System Install/Removal</option>
-                        <option value="Furniture & Equipment Assembly">🔨 Furniture & Equipment Assembly</option>
-                        <option value="Pool & Game Table Setup">🎱 Pool & Game Table Setup</option>
+                        <option value="Hot Tub Delivery">🛁 Hot Tub Delivery</option>
+                        <option value="Hot Tub Move">🚚 Hot Tub Move</option>
+                        <option value="Hot Tub Disposal">♻️ Hot Tub Disposal</option>
+                        <option value="Pool/Game Table Setup">🎱 Pool/Game Table Setup</option>
+                        <option value="Pool/Game Table Move">🎯 Pool/Game Table Move</option>
                     </select>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="address">Service Address <span class="required">*</span></label>
+                <label for="address" id="addressLabel">Service Address <span class="required">*</span></label>
                 <input type="text" id="address" name="address" required placeholder="Enter full address where service is needed">
+            </div>
+
+            <!-- Move-specific addresses (hidden by default) -->
+            <div id="moveAddresses" style="display: none;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pickupAddress">Pick-up Address <span class="required">*</span></label>
+                        <input type="text" id="pickupAddress" name="pickupAddress" placeholder="Enter pick-up address">
+                    </div>
+                    <div class="form-group">
+                        <label for="dropoffAddress">Drop-off Address <span class="required">*</span></label>
+                        <input type="text" id="dropoffAddress" name="dropoffAddress" placeholder="Enter drop-off address">
+                    </div>
+                </div>
             </div>
 
             <!-- Calendar Section -->
@@ -430,11 +508,20 @@
 
             <div id="alertContainer"></div>
         </form>
+
+        <!-- Success Modal -->
+        <div id="successModal" class="success-modal">
+            <div class="success-modal-content">
+                <h3>✅ Request Received!</h3>
+                <p>Your request has been received. One of our team members will confirm your appointment within 24hrs.</p>
+                <button class="success-modal-close" onclick="closeSuccessModal()">Got it!</button>
+            </div>
+        </div>
     </div>
 
     <script>
         // Configuration - REPLACE WITH YOUR ACTUAL FIREBASE PROJECT URL
-        const API_BASE_URL = 'https://us-central1-elite-spa-movers.cloudfunctions.net';
+        const API_BASE_URL = 'https://us-central1-YOUR-PROJECT-ID.cloudfunctions.net';
 
         // Global variables
         let currentDate = new Date();
@@ -442,11 +529,20 @@
         let selectedTime = null;
         let selectedServiceType = null;
 
-        // Business hours: 9 AM to 5 PM
+        // Business hours: 9 AM to 5 PM with 2-hour time blocks
         const BUSINESS_HOURS = {
             start: 9,
             end: 17,
-            interval: 60 // 60 minute intervals
+            interval: 120 // 120 minutes = 2 hours
+        };
+
+        // Service durations (in minutes)
+        const SERVICE_DURATIONS = {
+            'Hot Tub Delivery': 180,
+            'Hot Tub Move': 240,
+            'Hot Tub Disposal': 120,
+            'Pool/Game Table Setup': 120,
+            'Pool/Game Table Move': 180
         };
 
         // Form elements
@@ -455,6 +551,11 @@
         const loadingSpinner = document.getElementById('loadingSpinner');
         const alertContainer = document.getElementById('alertContainer');
         const serviceTypeSelect = document.getElementById('serviceType');
+        const addressLabel = document.getElementById('addressLabel');
+        const addressField = document.getElementById('address');
+        const moveAddresses = document.getElementById('moveAddresses');
+        const pickupAddress = document.getElementById('pickupAddress');
+        const dropoffAddress = document.getElementById('dropoffAddress');
 
         // Calendar elements
         const monthYearElement = document.getElementById('monthYear');
@@ -487,12 +588,45 @@
 
             serviceTypeSelect.addEventListener('change', () => {
                 selectedServiceType = serviceTypeSelect.value;
+                handleServiceTypeChange();
                 if (selectedDate && selectedServiceType) {
                     loadTimeSlots(selectedDate);
                 }
             });
 
             form.addEventListener('submit', submitForm);
+        }
+
+        function handleServiceTypeChange() {
+            const isMove = selectedServiceType && selectedServiceType.includes('Move');
+            
+            if (isMove) {
+                // Hide single address field
+                addressField.style.display = 'none';
+                addressField.required = false;
+                
+                // Show move addresses
+                moveAddresses.style.display = 'block';
+                pickupAddress.required = true;
+                dropoffAddress.required = true;
+                
+                // Update label
+                addressLabel.textContent = 'Addresses';
+            } else {
+                // Show single address field
+                addressField.style.display = 'block';
+                addressField.required = true;
+                
+                // Hide move addresses
+                moveAddresses.style.display = 'none';
+                pickupAddress.required = false;
+                dropoffAddress.required = false;
+                
+                // Reset label
+                addressLabel.innerHTML = 'Service Address <span class="required">*</span>';
+            }
+            
+            updateSubmitButton();
         }
 
         function renderCalendar() {
@@ -620,7 +754,7 @@
                 availabilities.forEach(({ time, available }) => {
                     const timeSlot = document.createElement('div');
                     timeSlot.className = 'time-slot';
-                    timeSlot.textContent = formatTime(time);
+                    timeSlot.textContent = formatTimeRange(time);
 
                     if (available) {
                         timeSlot.addEventListener('click', () => selectTime(time, timeSlot));
@@ -642,7 +776,8 @@
 
         function generateTimeSlots() {
             const slots = [];
-            for (let hour = BUSINESS_HOURS.start; hour < BUSINESS_HOURS.end; hour++) {
+            // Generate 2-hour time slots from 9 AM to 5 PM
+            for (let hour = BUSINESS_HOURS.start; hour < BUSINESS_HOURS.end; hour += 2) {
                 slots.push(`${hour.toString().padStart(2, '0')}:00`);
             }
             return slots;
@@ -654,6 +789,17 @@
             const ampm = parseInt(hour) >= 12 ? 'PM' : 'AM';
             const displayHour = hour12 === 0 ? 12 : hour12;
             return `${displayHour}:${minute} ${ampm}`;
+        }
+
+        function formatTimeRange(startTime) {
+            const [hour, minute] = startTime.split(':');
+            const startHour = parseInt(hour);
+            const endHour = startHour + 2;
+            
+            const startTime12 = formatTime(startTime);
+            const endTime12 = formatTime(`${endHour.toString().padStart(2, '0')}:${minute}`);
+            
+            return `${startTime12} - ${endTime12}`;
         }
 
         function selectTime(time, timeSlotElement) {
@@ -673,7 +819,7 @@
                 month: 'long', 
                 day: 'numeric' 
             });
-            const timeStr = formatTime(time);
+            const timeStr = formatTimeRange(time);
             
             selectedDateTimeText.textContent = `${dateStr} at ${timeStr}`;
             selectedDateTime.style.display = 'block';
@@ -683,11 +829,20 @@
         }
 
         function updateSubmitButton() {
+            const isMove = selectedServiceType && selectedServiceType.includes('Move');
+            let addressValid = false;
+            
+            if (isMove) {
+                addressValid = pickupAddress.value.trim() && dropoffAddress.value.trim();
+            } else {
+                addressValid = addressField.value.trim();
+            }
+            
             const isFormValid = selectedDate && selectedTime && 
-                document.getElementById('fullName').value &&
-                document.getElementById('email').value &&
-                document.getElementById('phoneNumber').value &&
-                document.getElementById('address').value &&
+                document.getElementById('fullName').value.trim() &&
+                document.getElementById('email').value.trim() &&
+                document.getElementById('phoneNumber').value.trim() &&
+                addressValid &&
                 selectedServiceType;
 
             submitBtn.disabled = !isFormValid;
@@ -697,6 +852,10 @@
         ['fullName', 'email', 'phoneNumber', 'address'].forEach(id => {
             document.getElementById(id).addEventListener('input', updateSubmitButton);
         });
+        
+        // Add listeners for move addresses
+        pickupAddress.addEventListener('input', updateSubmitButton);
+        dropoffAddress.addEventListener('input', updateSubmitButton);
 
         async function submitForm(e) {
             e.preventDefault();
@@ -713,13 +872,22 @@
                     fullName: document.getElementById('fullName').value,
                     email: document.getElementById('email').value,
                     phoneNumber: document.getElementById('phoneNumber').value,
-                    address: document.getElementById('address').value,
                     serviceType: selectedServiceType,
                     requestedDate: selectedDate.toISOString().split('T')[0],
                     requestedTime: selectedTime,
                     notes: document.getElementById('notes').value,
                     photoUrl: null
                 };
+
+                // Handle address based on service type
+                const isMove = selectedServiceType && selectedServiceType.includes('Move');
+                if (isMove) {
+                    formData.pickupAddress = pickupAddress.value;
+                    formData.dropoffAddress = dropoffAddress.value;
+                    formData.address = `From: ${pickupAddress.value} | To: ${dropoffAddress.value}`;
+                } else {
+                    formData.address = addressField.value;
+                }
 
                 const response = await fetch(`${API_BASE_URL}/createAppointment`, {
                     method: 'POST',
@@ -732,13 +900,20 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    showAlert('🎉 Appointment request submitted successfully! We\'ll contact you within 24 hours to confirm.', 'success');
+                    // Show success modal instead of alert
+                    showSuccessModal();
+                    
+                    // Reset form
                     form.reset();
                     selectedDate = null;
                     selectedTime = null;
                     selectedServiceType = null;
                     timeSlotsSection.style.display = 'none';
                     selectedDateTime.style.display = 'none';
+                    moveAddresses.style.display = 'none';
+                    addressField.style.display = 'block';
+                    addressField.required = true;
+                    addressLabel.innerHTML = 'Service Address <span class="required">*</span>';
                     renderCalendar();
                     updateSubmitButton();
                 } else {
@@ -779,6 +954,22 @@
                 setTimeout(() => {
                     alertContainer.innerHTML = '';
                 }, 5000);
+            }
+        }
+
+        function showSuccessModal() {
+            document.getElementById('successModal').style.display = 'block';
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('successModal');
+            if (event.target === modal) {
+                closeSuccessModal();
             }
         }
     </script>
