@@ -10,8 +10,8 @@ const db = admin.firestore();
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'your-email@gmail.com',       // replace with your gmail address
-    pass: 'your-email-password-or-app-password' // use app password for 2FA
+    user: 'pastor.tyler.woodruff@gmail.com',       // replace with your gmail address
+    pass: 'Pickles54' // use app password for 2FA
   }
 });
 
