@@ -1,0 +1,52 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+package-lock.json
+
+# Firebase
+.firebase/
+.firebaserc
+firebase-debug.log
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+
+# Xcode/Swift
+*.xcuserstate
+*.xcuserdata
+*.xcworkspace
+*.xcodeproj
+DerivedData/
+build/
+*.swiftsourceinfo
+
+# Logs
+*.log
+
+# Editor folders
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# System
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Other
+.env
+.env.local
+.env.*
+coverage/
+dist/
+public/
+
+# Ignore pglite debug files
+pglite-debug.log
