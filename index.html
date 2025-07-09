@@ -737,7 +737,7 @@
                 const availabilityPromises = timeSlots.map(async (time) => {
                     try {
                         const response = await fetch(
-                            `${API_BASE_URL}/checkAvailability?date=${dateStr}&time=${time}&serviceType=${encodeURIComponent(selectedServiceType)}`
+                            `${API_BASE_URL}/checkAvailabilityV3?date=${dateStr}&time=${time}&serviceType=${encodeURIComponent(selectedServiceType)}`
                         );
                         const result = await response.json();
                         return { time, available: result.available };
@@ -889,7 +889,7 @@
                     formData.address = addressField.value;
                 }
 
-                const response = await fetch(`${API_BASE_URL}/createAppointment`, {
+                const response = await fetch(`${API_BASE_URL}/createAppointmentV3`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
