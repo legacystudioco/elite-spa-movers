@@ -60,7 +60,7 @@ exports.createAppointmentV3 = functions.https.onRequest((req, res) => {
       if (!data) {
         return res.status(400).json({ error: 'Missing request body.' });
       }
-      const requiredFields = ['name', 'phone', 'email', 'serviceType', 'requestedDate', 'requestedTime', 'address'];
+      const requiredFields = ['name', 'phoneNumber', 'email', 'serviceType', 'requestedDate', 'requestedTime', 'address'];
       for (let field of requiredFields) {
         if (!data[field]) {
           return res.status(400).json({ error: `Missing required field: ${field}` });
@@ -71,7 +71,7 @@ exports.createAppointmentV3 = functions.https.onRequest((req, res) => {
 
       // Send confirmation email to customer
       const mailOptions = {
-        from: 'your-email@gmail.com', // your Gmail
+        from: 'pastor.tyler.woodruff@gmail.com', // your Gmail
         to: data.email,
         subject: 'Appointment Request Received',
         text: `Thank you ${data.name} for your appointment request. We will contact you within 24 hours to confirm.`
