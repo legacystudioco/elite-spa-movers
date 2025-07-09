@@ -1,13 +1,9 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const cors = require('cors')({ origin: true });
-const { setGlobalOptions } = require('firebase-functions');
 
 admin.initializeApp();
 const db = admin.firestore();
-
-// Set max concurrent requests per function
-setGlobalOptions({ maxInstances: 10 });
 
 // [1] Check Availability (CORS-enabled)
 exports.checkAvailability = functions.https.onRequest((req, res) => {
