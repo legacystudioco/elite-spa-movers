@@ -1,71 +1,66 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const { setGlobalOptions } = require('firebase-functions');
+const cors = require('cors')({
+  origin: [
+    'https://legacystudioco.github.io',
+    'https://your-wix-site.wixsite.com', // <-- add your actual Wix site URL here
+  ],
+});
 
 admin.initializeApp();
 const db = admin.firestore();
 
-// Set max concurrent requests per function
-setGlobalOptions({ maxInstances: 10 });
-
-// [1] Check Availability
-exports.checkAvailability = functions.https.onRequest(async (req, res) => {
-  const { date, time, serviceType } = req.query;
-
-  if (!date || !time || !serviceType) {
-    return res.status(400).json({ available: false, reason: 'Missing parameters' });
-  }
-
-  try {
-    const snapshot = await db.collection('appointments')
-      .where('requestedDate', '==', date)
-      .where('requestedTime', '==', time)
-      .where('serviceType', '==', serviceType)
-      .get();
-
-    if (!snapshot.empty) {
-      return res.json({ available: false, reason: 'Slot already booked' });
+// --- Appointment Availability Endpoint ---
+exports.checkAvailability = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    try {
+      const { date, time, serviceType } = req.query;
+      if (!date || !time || !serviceType) {
+        return res.status(400).json({ error: 'Missing required parameters.' });
+      }
+      // Check for existing appointments with overlapping time
+      const snapshot = await db.collection('appointments')
+        .where('requestedDate', '==', date)
+        .where('requestedTime', '==', time)
+        .where('serviceType', '==', serviceType)
+        .get();
+      if (snapshot.empty) {
+        return res.json({ available: true });
+      } else {
+        return res.json({ available: false });
+      }
+    } catch (err) {
+      console.error('Error checking availability:', err);
+      return res.status(500).json({ error: 'Internal server error.' });
     }
-
-    return res.json({ available: true });
-  } catch (error) {
-    console.error('Error checking availability:', error);
-    return res.status(500).json({ available: false, reason: 'Server error' });
-  }
+  });
 });
 
-// [2] Create Appointment
-exports.createAppointment = functions.https.onRequest(async (req, res) => {
-  const data = req.body;
+// --- Appointment Creation Endpoint ---
+exports.createAppointment = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    try {
+      const data = req.body && Object.keys(req.body).length ? req.body : req.body = JSON.parse(req.rawBody);
+      if (!data) {
+        return res.status(400).json({ error: 'Missing request body.' });
+      }
 
-  if (
-    !data.fullName ||
-    !data.email ||
-    !data.phoneNumber ||
-    !data.requestedDate ||
-    !data.requestedTime ||
-    !data.serviceType
-  ) {
-    return res.status(400).json({ error: 'Missing required fields' });
-  }
+      // Validate required fields as needed
+      const requiredFields = ['name', 'phone', 'email', 'serviceType', 'requestedDate', 'requestedTime', 'address'];
+      for (let field of requiredFields) {
+        if (!data[field]) {
+          return res.status(400).json({ error: `Missing required field: ${field}` });
+        }
+      }
 
-  try {
-    await db.collection('appointments').add({
-      fullName: data.fullName,
-      email: data.email,
-      phoneNumber: data.phoneNumber,
-      address: data.address || '',
-      serviceType: data.serviceType,
-      requestedDate: data.requestedDate,
-      requestedTime: data.requestedTime,
-      notes: data.notes || '',
-      photoUrl: data.photoUrl || null,
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
-    });
+      // Save appointment to Firestore
+      data.createdAt = admin.firestore.FieldValue.serverTimestamp();
+      await db.collection('appointments').add(data);
 
-    return res.status(200).json({ success: true });
-  } catch (error) {
-    console.error('Error creating appointment:', error);
-    return res.status(500).json({ error: 'Failed to create appointment' });
-  }
+      return res.json({ success: true, message: 'Appointment created successfully!' });
+    } catch (err) {
+      console.error('Error creating appointment:', err);
+      return res.status(500).json({ error: 'Internal server error.' });
+    }
+  });
 });
