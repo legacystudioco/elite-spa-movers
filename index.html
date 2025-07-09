@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Elite Spa Movers - Book Appointment</title>
     <style>
         body {
@@ -419,22 +419,22 @@
             <p>Fill out the request below and we'll get back to you within 24 hours to confirm your appointment</p>
         </div>
 
-       <form id="bookingForm">
-    <div class="form-row">
-        <div class="form-group">
-            <label for="fullName">Full Name <span class="required">*</span></label>
-            <input type="text" id="fullName" name="name" required>
-        </div>
-        <div class="form-group">
-            <label for="email">Email Address <span class="required">*</span></label>
-            <input type="email" id="email" name="email" required>
-        </div>
-    </div>
+        <form id="bookingForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fullName">Full Name <span class="required">*</span></label>
+                    <input type="text" id="fullName" name="name" required />
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required />
+                </div>
+            </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="phoneNumber">Phone Number <span class="required">*</span></label>
-                    <input type="tel" id="phoneNumber" name="phoneNumber" required>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" required />
                 </div>
                 <div class="form-group">
                     <label for="serviceType">Service Type <span class="required">*</span></label>
@@ -451,19 +451,29 @@
 
             <div class="form-group">
                 <label for="address" id="addressLabel">Service Address <span class="required">*</span></label>
-                <input type="text" id="address" name="address" required placeholder="Enter full address where service is needed">
+                <input
+                    type="text"
+                    id="address"
+                    name="address"
+                    required
+                    placeholder="Enter full address where service is needed"
+                />
             </div>
 
-            <!-- Move-specific addresses (hidden by default) -->
             <div id="moveAddresses" style="display: none;">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="pickupAddress">Pick-up Address <span class="required">*</span></label>
-                        <input type="text" id="pickupAddress" name="pickupAddress" placeholder="Enter pick-up address">
+                        <input type="text" id="pickupAddress" name="pickupAddress" placeholder="Enter pick-up address" />
                     </div>
                     <div class="form-group">
                         <label for="dropoffAddress">Drop-off Address <span class="required">*</span></label>
-                        <input type="text" id="dropoffAddress" name="dropoffAddress" placeholder="Enter drop-off address">
+                        <input
+                            type="text"
+                            id="dropoffAddress"
+                            name="dropoffAddress"
+                            placeholder="Enter drop-off address"
+                        />
                     </div>
                 </div>
             </div>
@@ -494,12 +504,15 @@
 
             <div class="form-group">
                 <label for="notes">Additional Notes (Optional)</label>
-                <textarea id="notes" name="notes" rows="4" placeholder="Any special instructions, access information, or additional details..."></textarea>
+                <textarea
+                    id="notes"
+                    name="notes"
+                    rows="4"
+                    placeholder="Any special instructions, access information, or additional details..."
+                ></textarea>
             </div>
 
-            <button type="submit" class="submit-btn" id="submitBtn" disabled>
-                📅 Request Appointment
-            </button>
+            <button type="submit" class="submit-btn" id="submitBtn" disabled>📅 Request Appointment</button>
 
             <div class="loading-spinner" id="loadingSpinner">
                 <div class="spinner"></div>
@@ -509,7 +522,6 @@
             <div id="alertContainer"></div>
         </form>
 
-        <!-- Success Modal -->
         <div id="successModal" class="success-modal">
             <div class="success-modal-content">
                 <h3>✅ Request Received!</h3>
@@ -802,116 +814,60 @@
             return `${startTime12} - ${endTime12}`;
         }
 
-       <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Elite Spa Movers - Book Appointment</title>
-    <style>
-        /* (Keep your existing CSS unchanged) */
-        /* Your full CSS from before... */
-        body {
-            margin: 0;
-            padding: 20px;
-            background: #f4f4f4;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        function selectTime(time, timeSlotElement) {
+            // Remove previous selection
+            document.querySelectorAll('.time-slot.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+
+            // Add selection to clicked time slot
+            timeSlotElement.classList.add('selected');
+            selectedTime = time;
+
+            // Update selected date/time display
+            const dateStr = selectedDate.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            const timeStr = formatTimeRange(time);
+            
+            selectedDateTimeText.textContent = `${dateStr} at ${timeStr}`;
+            selectedDateTime.style.display = 'block';
+
+            // Enable submit button
+            updateSubmitButton();
         }
-        /* ... other CSS styles ... */
-    </style>
-</head>
-<body>
-    <div class="booking-form">
-        <div class="form-header">
-            <h2>📞 Request an Appointment</h2>
-            <p>Fill out the request below and we'll get back to you within 24 hours to confirm your appointment</p>
-        </div>
 
-        <form id="bookingForm">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="fullName">Full Name <span class="required">*</span></label>
-                    <input type="text" id="fullName" name="name" required />
-                </div>
-                <div class="form-group">
-                    <label for="email">Email Address <span class="required">*</span></label>
-                    <input type="email" id="email" name="email" required />
-                </div>
-            </div>
+        function updateSubmitButton() {
+            const isMove = selectedServiceType && selectedServiceType.includes('Move');
+            let addressValid = false;
+            
+            if (isMove) {
+                addressValid = pickupAddress.value.trim() && dropoffAddress.value.trim();
+            } else {
+                addressValid = addressField.value.trim();
+            }
+            
+            const isFormValid = selectedDate && selectedTime && 
+                document.getElementById('fullName').value.trim() &&
+                document.getElementById('email').value.trim() &&
+                document.getElementById('phoneNumber').value.trim() &&
+                addressValid &&
+                selectedServiceType;
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="phoneNumber">Phone Number <span class="required">*</span></label>
-                    <input type="tel" id="phoneNumber" name="phoneNumber" required />
-                </div>
-                <div class="form-group">
-                    <label for="serviceType">Service Type <span class="required">*</span></label>
-                    <select id="serviceType" name="serviceType" required>
-                        <option value="">Select a service...</option>
-                        <option value="Hot Tub Delivery">🛁 Hot Tub Delivery</option>
-                        <option value="Hot Tub Move">🚚 Hot Tub Move</option>
-                        <option value="Hot Tub Disposal">♻️ Hot Tub Disposal</option>
-                        <option value="Pool/Game Table Setup">🎱 Pool/Game Table Setup</option>
-                        <option value="Pool/Game Table Move">🎯 Pool/Game Table Move</option>
-                    </select>
-                </div>
-            </div>
+            submitBtn.disabled = !isFormValid;
+        }
 
-            <div class="form-group">
-                <label for="address" id="addressLabel">Service Address <span class="required">*</span></label>
-                <input
-                    type="text"
-                    id="address"
-                    name="address"
-                    required
-                    placeholder="Enter full address where service is needed"
-                />
-            </div>
-
-            <div id="moveAddresses" style="display: none;">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="pickupAddress">Pick-up Address <span class="required">*</span></label>
-                        <input type="text" id="pickupAddress" name="pickupAddress" placeholder="Enter pick-up address" />
-                    </div>
-                    <div class="form-group">
-                        <label for="dropoffAddress">Drop-off Address <span class="required">*</span></label>
-                        <input
-                            type="text"
-                            id="dropoffAddress"
-                            name="dropoffAddress"
-                            placeholder="Enter drop-off address"
-                        />
-                    </div>
-                </div>
-            </div>
-
-            <!-- Calendar and time slots sections here (unchanged) -->
-
-            <button type="submit" class="submit-btn" id="submitBtn" disabled>📅 Request Appointment</button>
-
-            <div class="loading-spinner" id="loadingSpinner">
-                <div class="spinner"></div>
-                <p>Submitting your request...</p>
-            </div>
-
-            <div id="alertContainer"></div>
-        </form>
-
-        <div id="successModal" class="success-modal">
-            <div class="success-modal-content">
-                <h3>✅ Request Received!</h3>
-                <p>Your request has been received. One of our team members will confirm your appointment within 24hrs.</p>
-                <button class="success-modal-close" onclick="closeSuccessModal()">Got it!</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Your existing config & variables here
-        const API_BASE_URL = 'https://us-central1-elite-spa-movers.cloudfunctions.net';
-
-        // ... all your existing JavaScript for calendar, time slots, etc. unchanged ...
+        // Add input listeners to update submit button
+        ['fullName', 'email', 'phoneNumber', 'address'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateSubmitButton);
+        });
+        
+        // Add listeners for move addresses
+        pickupAddress.addEventListener('input', updateSubmitButton);
+        dropoffAddress.addEventListener('input', updateSubmitButton);
 
         async function submitForm(e) {
             e.preventDefault();
@@ -925,7 +881,7 @@
 
             try {
                 const formData = {
-                    name: document.getElementById('fullName').value,  // <--- changed here
+                    name: document.getElementById('fullName').value,
                     email: document.getElementById('email').value,
                     phoneNumber: document.getElementById('phoneNumber').value,
                     serviceType: selectedServiceType,
@@ -947,7 +903,7 @@
                 const response = await fetch(`${API_BASE_URL}/createAppointmentV3`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(formData)
                 });
@@ -971,6 +927,7 @@
                 } else {
                     throw new Error(result.error || 'Failed to submit appointment');
                 }
+
             } catch (error) {
                 console.error('Error submitting appointment:', error);
                 showAlert('❌ ' + error.message, 'error');
@@ -979,7 +936,50 @@
             }
         }
 
-        // Rest of your JS unchanged...
+        function setLoadingState(loading) {
+            if (loading) {
+                submitBtn.style.display = 'none';
+                loadingSpinner.style.display = 'block';
+                const inputs = form.querySelectorAll('input, select, textarea, button');
+                inputs.forEach(input => input.disabled = true);
+            } else {
+                submitBtn.style.display = 'block';
+                loadingSpinner.style.display = 'none';
+                const inputs = form.querySelectorAll('input, select, textarea, button');
+                inputs.forEach(input => input.disabled = false);
+                updateSubmitButton();
+            }
+        }
+
+        function showAlert(message, type) {
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type}">
+                    ${message}
+                </div>
+            `;
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    alertContainer.innerHTML = '';
+                }, 5000);
+            }
+        }
+
+        function showSuccessModal() {
+            document.getElementById('successModal').style.display = 'block';
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('successModal');
+            if (event.target === modal) {
+                closeSuccessModal();
+            }
+        }
     </script>
 </body>
 </html>
