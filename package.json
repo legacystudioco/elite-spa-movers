@@ -1,13 +1,5 @@
 {
   "name": "elite-spa-movers-functions",
-  "description": "Elite Spa Movers Booking System Backend",
-  "scripts": {
-    "serve": "firebase emulators:start --only functions",
-    "shell": "firebase functions:shell",
-    "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
-  },
   "engines": {
     "node": "20"
   },
@@ -24,3 +16,4 @@
   },
   "private": true
 }
+
