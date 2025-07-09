@@ -881,15 +881,15 @@
 
             try {
                 const formData = {
-                    name: document.getElementById('fullName').value,
-                    email: document.getElementById('email').value,
-                    phoneNumber: document.getElementById('phoneNumber').value,
-                    serviceType: selectedServiceType,
-                    requestedDate: selectedDate.toISOString().split('T')[0],
-                    requestedTime: selectedTime,
-                    notes: document.getElementById('notes').value,
-                    photoUrl: null
-                };
+  name: document.getElementById('fullName').value,
+  email: document.getElementById('email').value,
+  phoneNumber: document.getElementById('phoneNumber').value,
+  serviceType: selectedServiceType,
+  requestedDate: selectedDate.toISOString().split('T')[0],
+  requestedTime: selectedTime,
+  notes: document.getElementById('notes').value,
+  photoUrl: null
+};
 
                 const isMove = selectedServiceType && selectedServiceType.includes('Move');
                 if (isMove) {
