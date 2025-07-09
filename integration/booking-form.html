@@ -1,0 +1,93 @@
+<!-- wix-integration/booking-form.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Spa Movers - Book Appointment</title>
+    <link rel="stylesheet" href="booking-form.css">
+</head>
+<body>
+    <div class="booking-form">
+        <div class="form-header">
+            <h2>📞 Request an Appointment</h2>
+            <p>Fill out the form below and we'll get back to you within 24 hours</p>
+        </div>
+
+        <form id="bookingForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fullName">Full Name <span class="required">*</span></label>
+                    <input type="text" id="fullName" name="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number <span class="required">*</span></label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" required>
+                </div>
+                <div class="form-group">
+                    <label for="serviceType">Service Type <span class="required">*</span></label>
+                    <select id="serviceType" name="serviceType" required>
+                        <option value="">Select a service...</option>
+                        <option value="Hot Tub Moving & Delivery">🛁 Hot Tub Moving & Delivery</option>
+                        <option value="Basketball System Install/Removal">🏀 Basketball System Install/Removal</option>
+                        <option value="Furniture & Equipment Assembly">🔨 Furniture & Equipment Assembly</option>
+                        <option value="Pool & Game Table Setup">🎱 Pool & Game Table Setup</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Service Address <span class="required">*</span></label>
+                <input type="text" id="address" name="address" required placeholder="Enter full address where service is needed">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="requestedDate">Preferred Date <span class="required">*</span></label>
+                    <input type="date" id="requestedDate" name="requestedDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="requestedTime">Preferred Time <span class="required">*</span></label>
+                    <input type="time" id="requestedTime" name="requestedTime" required min="09:00" max="17:00">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Additional Notes (Optional)</label>
+                <textarea id="notes" name="notes" rows="4" placeholder="Any special instructions, access information, or additional details..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Upload Photo (Optional)</label>
+                <div class="file-upload">
+                    <input type="file" id="photoUpload" accept="image/jpeg,image/jpg,image/png" />
+                    <label for="photoUpload" class="file-upload-label">
+                        📷 Click to upload a photo (JPG, PNG - Max 10MB)
+                    </label>
+                </div>
+                <div id="filePreview" class="file-preview" style="display: none;"></div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                📅 Request Appointment
+            </button>
+
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
+                <p>Submitting your request...</p>
+            </div>
+
+            <div id="alertContainer"></div>
+        </form>
+    </div>
+
+    <script src="booking-form.js"></script>
+</body>
+</html>
